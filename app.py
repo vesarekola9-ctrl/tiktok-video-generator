@@ -3,7 +3,6 @@ import os
 from PIL import Image
 import google.generativeai as genai
 
-# Hae Gemini API-avain ympäristömuuttujasta tai Streamlit secretsistä
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key and "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
@@ -31,7 +30,7 @@ if st.button("🚀 Luo hassu video"):
             try:
                 image = Image.open(uploaded_file)
                 
-                # Käytetään ilmaista ja nopeaa Gemini-mallia
+                # Käytetään päivitettyä mallinimeä
                 model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 full_prompt = (
