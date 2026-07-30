@@ -30,8 +30,8 @@ if st.button("🚀 Luo hassu video"):
             try:
                 image = Image.open(uploaded_file)
                 
-                # Käytetään päivitettyä mallinimeä
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                # Päivitetty mallinimi
+                model = genai.GenerativeModel('gemini-2.0-flash')
                 
                 full_prompt = (
                     "Olet huippuluokan TikTok-sisällöntuottaja ja viraalivideoiden asiantuntija. "
