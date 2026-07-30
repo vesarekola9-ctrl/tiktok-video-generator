@@ -1,17 +1,15 @@
 ﻿import streamlit as st
 import os
-import base64
-from dotenv import load_dotenv
-from openai import OpenAI
+from PIL import Image
+import google.generativeai as genai
 
-load_dotenv()
+# Hae Gemini API-avain ympäristömuuttujasta tai Streamlit secretsistä
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key and "GEMINI_API_KEY" in st.secrets:
+    api_key = st.secrets["GEMINI_API_KEY"]
 
-# Hae API-avain joko ympäristömuuttujasta tai Streamlit secretsistä
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key and "OPENAI_API_KEY" in st.secrets:
-    api_key = st.secrets["OPENAI_API_KEY"]
-
-client = OpenAI(api_key=api_key) if api_key else None
+if api_key:
+    genai.configure(api_key=api_key)
 
 st.set_page_config(page_title="TikTok Hassu Video Generaattori", page_icon="🎬", layout="centered")
 
@@ -27,44 +25,27 @@ prompt = st.text_input(
 
 if st.button("🚀 Luo hassu video"):
     if not api_key:
-        st.error("❌ OpenAI API-avain puuttuu! Lisää se .env-tiedostoon tai Streamlit Secretsiin.")
+        st.error("❌ GEMINI_API_KEY puuttuu! Lisää se Streamlit Secretsiin.")
     elif uploaded_file is not None and prompt:
         with st.spinner("🤖 Tekoäly analysoi kuvaasi ja loihtii viraali-idean TikTokiin..."):
             try:
-                image_bytes = uploaded_file.getvalue()
-                base64_image = base64.b64encode(image_bytes).decode('utf-8')
-
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": "Olet huippuluokan TikTok-sisällöntuottaja ja viraalivideoiden asiantuntija. Analysoi käyttäjän kuva ja idea, ja luo sen pohjalta äärimmäisen hauska ja mukaansatempaava TikTok-videon käsikirjoitus, vinkit toteutukseen sekä nokkela kuvateksti hashtagien kera suomeksi."
-                        },
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "text",
-                                    "text": f"Luo tällä idealla hassu TikTok-videokonsepti: {prompt}"
-                                },
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/jpeg;base64,{base64_image}"
-                                    }
-                                }
-                            ]
-                        }
-                    ],
-                    max_tokens=800,
-                    temperature=0.8
+                image = Image.open(uploaded_file)
+                
+                # Käytetään ilmaista ja nopeaa Gemini-mallia
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                
+                full_prompt = (
+                    "Olet huippuluokan TikTok-sisällöntuottaja ja viraalivideoiden asiantuntija. "
+                    "Analysoi käyttäjän kuva ja idea, ja luo sen pohjalta äärimmäisen hauska ja mukaansatempaava "
+                    "TikTok-videon käsikirjoitus, vinkit toteutukseen sekä nokkela kuvateksti hashtagien kera suomeksi.\n\n"
+                    f"Ideana on: {prompt}"
                 )
 
-                result = response.choices[0].message.content
+                response = model.generate_content([full_prompt, image])
+                
                 st.success("✨ Hassu TikTok-konsepti luotu onnistuneesti!")
                 st.markdown("### 📋 TikTok-käsikirjoitus & Konsepti")
-                st.write(result)
+                st.write(response.text)
 
             except Exception as e:
                 st.error(f"Virhe tekoälypyynnössä: {e}")
