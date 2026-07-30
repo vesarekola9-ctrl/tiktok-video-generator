@@ -1,24 +1,24 @@
-import streamlit as st
+﻿import streamlit as st
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-st.set_page_config(page_title="TikTok Hassu Video Generaattori", page_icon="??", layout="centered")
+st.set_page_config(page_title="TikTok Hassu Video Generaattori", page_icon="🎬", layout="centered")
 
-st.title("?? TikTok Hassu Video Generaattori")
-st.write("Lataa oma kuvasi, kirjoita millaisen hassun videon haluat, ja luo viraalisis�lt�� TikTokiin!")
+st.title("🎬 TikTok Hassu Video Generaattori")
+st.write("Lataa oma kuvasi, kirjoita millaisen hassun videon haluat, ja luo viraalisisältöä TikTokiin!")
 
 uploaded_file = st.file_uploader("Valitse oma kasvokuvasi", type=["png", "jpg", "jpeg"])
 
 prompt = st.text_input(
     "Millaisen hassun videon haluat?", 
-    placeholder="esim. 'tanssii ys�ridiskossa neonvaloissa, hauska animaatiotyyli'"
+    placeholder="esim. 'tanssii ysäridiskossa neonvaloissa, hauska animaatiotyyli'"
 )
 
-if st.button("?? Luo hassu video"):
+if st.button("🚀 Luo hassu video"):
     if uploaded_file is not None and prompt:
-        st.info("?? Teko�ly k�sittelee kuvaasi ja luo videota... Odota hetki.")
-        st.success("? Video luotu onnistuneesti! Valmis ladattavaksi TikTokiin.")
+        st.info("🤖 Tekoäly käsittelee kuvaasi ja luo videota... Odota hetki.")
+        st.success("✨ Video luotu onnistuneesti! Valmis ladattavaksi TikTokiin.")
     else:
-        st.warning("?? Ole hyv� ja lataa kuva sek� kirjoita millaisen videon haluat.")
+        st.warning("⚠️ Ole hyvä ja lataa kuva sekä kirjoita millaisen videon haluat.")
